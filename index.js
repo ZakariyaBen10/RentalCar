@@ -1,6 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
+
+const carRoutes = require('./routes/carRoutes');
 
 dotenv.config();
 
@@ -11,6 +14,10 @@ mongoose.connect(process.env.MONGO_KEY, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+app.use(bodyParser.json());
+
+app.use(carRoutes);
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
