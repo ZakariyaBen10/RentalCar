@@ -28,6 +28,11 @@ const clientController = {
   addClient: async (req, res) => {
     const newClientData = req.body;
 
+    // Validate name format
+    if (isValidName(newClientData.name)) {
+      return res.status(400).json({ error: 'Name cannot contain numbers' });
+    }
+
     // Validate email format
     if (!isValidEmail(newClientData.email)) {
       return res.status(400).json({ error: 'Invalid email format' });
@@ -51,6 +56,11 @@ const clientController = {
   updateClient: async (req, res) => {
     const clientId = req.params.id;
     const updatedClientData = req.body;
+
+
+    if (updatedClientData.email && !isValidName(updatedClientData.name)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
 
     if (updatedClientData.email && !isValidEmail(updatedClientData.email)) {
       return res.status(400).json({ error: 'Invalid email format' });
@@ -99,4 +109,8 @@ function isValidPhoneNumber(phoneNumber) {
   return phoneRegex.test(phoneNumber);
 }
 
+
+function isValidName(str) {
+  return /\d/.test(str);
+}
 module.exports = clientController;
