@@ -5,7 +5,18 @@ const Car = require('../models/Car');
 const bookingController = {
   getAllBookings: async (req, res) => {
     try {
-      const bookings = await Booking.find();
+      const { limit, offset, searchField, searchValue } = req.query;
+
+      let query = {};
+
+      if (searchField && searchValue) {
+        query[searchField] = new RegExp(searchValue, 'i');
+      }
+
+      const bookings = await Booking.find(query)
+        .limit(parseInt(limit, 10) || 10)
+        .skip(parseInt(offset, 10) || 0);
+
       res.json(bookings);
     } catch (error) {
       console.error(error);

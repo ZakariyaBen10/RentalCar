@@ -2,8 +2,21 @@ const Client = require('../models/Client');
 
 const clientController = {
   getAllClients: async (req, res) => {
-    try {
-      const clients = await Client.find();
+  try {
+      const { limit, offset, searchField, searchValue } = req.query;
+
+      let query = {};
+
+      
+      if (searchField && searchValue) {
+        query[searchField] = new RegExp(searchValue, 'i');
+      }
+
+      
+      const clients = await Client.find(query)
+        .limit(parseInt(limit, 10) || 10)
+        .skip(parseInt(offset, 10) || 0);
+
       res.json(clients);
     } catch (error) {
       console.error(error);

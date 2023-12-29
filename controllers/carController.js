@@ -3,7 +3,18 @@ const Cars = require('../models/Car');
 const carController = {
   getAllCars: async (req, res) => {
     try {
-      const cars = await Cars.find();
+      const { limit, offset, searchField, searchValue } = req.query;
+
+      let query = {};
+
+      if (searchField && searchValue) {
+        query[searchField] = new RegExp(searchValue, 'i'); 
+      }
+
+      const cars = await Cars.find(query)
+        .limit(parseInt(limit, 10) || 10)
+        .skip(parseInt(offset, 10) || 0);
+
       res.json(cars);
     } catch (error) {
       console.error(error);
